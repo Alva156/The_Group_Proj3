@@ -10,6 +10,79 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Josefin+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #2d313d;
+        font-family: "Josefin Sans", sans-serif;
+        color: white;
+      }
+      .navbar {
+        background-color: #353744;
+      }
+      .container {
+        max-width: 900px;
+        margin-top: 50px;
+      }
+      .card {
+        border-radius: 15px;
+        background-color: #353744;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+      .btn-danger {
+        background-color: #dc3545;
+        border: none;
+      }
+      .btn-danger:hover {
+        background-color: #c82333;
+      }
+      h1 {
+        font-family: "Abril Fatface";
+        color: #ffffff;
+        font-weight: bold;
+        letter-spacing: 2px;
+      }
+      h5 {
+        color: #dc3545;
+        margin-bottom: 20px;
+      }
+      table {
+        width: 100%;
+        font-size: 1em;
+        margin-bottom: 20px;
+        background-color: #2a2a2a;
+        border: 1px solid #444;
+      }
+      th {
+        background-color: #2a2a2a;
+        color: #ffffff;
+        padding: 15px;
+      }
+      td {
+        background-color: #2a2a2a;
+        color: #ffffff;
+        border-top: 1px solid #444;
+        padding: 15px;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #999999;
+      }
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1.8rem;
+        }
+        .btn-lg {
+          font-size: 1rem;
+          width: 50%;
+          margin-top: 20px;
+        }
+      }
+    </style>
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -22,50 +95,106 @@
     ></script>
   </head>
   <body>
-    <div class="container mt-5">
-      <h1 class="text-center mb-4">Your IP Information</h1>
-      <div class="text-center mb-4">
-        <button class="btn btn-danger btn-lg" onclick="fetchIpInfo()">
-          Fetch IP Info
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">IP Information App</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
         </button>
-      </div>
-
-      <div class="card shadow">
-        <div class="card-body">
-          <h5 class="card-title text-danger">IP Details</h5>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-              IPv4 Address: <strong><span id="ipv4">-</span></strong>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Home</a>
             </li>
-            <li class="list-group-item">
-              IPv6 Address: <strong><span id="ipv6">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              Country: <strong><span id="country">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              Region: <strong><span id="region">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              City: <strong><span id="city">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              ISP: <strong><span id="isp">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              Latitude: <strong><span id="latitude">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              Longitude: <strong><span id="longitude">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              ASN: <strong><span id="asn">-</span></strong>
-            </li>
-            <li class="list-group-item">
-              Country Code: <strong><span id="country_code">-</span></strong>
+            <li class="nav-item">
+              <a class="nav-link" href="about.html">About</a>
             </li>
           </ul>
         </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4"
+      >
+        <h1 class="text-nowrap">YOUR IP INFORMATION</h1>
+        <button
+          class="btn btn-danger btn-lg mt-3 mt-md-0"
+          onclick="fetchIpInfo()"
+        >
+          Fetch IP Info
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-danger">IP Details</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th>IPv4 Address</th>
+                    <td><span id="ipv4">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>IPv6 Address</th>
+                    <td><span id="ipv6">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>Country</th>
+                    <td><span id="country">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>Region</th>
+                    <td><span id="region">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>City</th>
+                    <td><span id="city">-</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6 mb-3">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th>ISP</th>
+                    <td><span id="isp">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>Latitude</th>
+                    <td><span id="latitude">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>Longitude</th>
+                    <td><span id="longitude">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>ASN</th>
+                    <td><span id="asn">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>Country Code</th>
+                    <td><span id="country_code">-</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <p>© 2024 IP Information App. All rights reserved.</p>
       </div>
     </div>
 

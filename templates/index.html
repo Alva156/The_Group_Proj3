@@ -11,17 +11,18 @@
       crossorigin="anonymous"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Josefin+Sans:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Josefin+Sans:wght@400;700&family=Archivo+Black&display=swap"
       rel="stylesheet"
     />
     <style>
       body {
-        background-color: #2d313d;
+        background-color: #191919;
         font-family: "Josefin Sans", sans-serif;
         color: white;
       }
       .navbar {
-        background-color: #353744;
+        background-color: #2c2c2c;
+        padding: 10px 20px;
       }
       .container {
         max-width: 900px;
@@ -29,25 +30,26 @@
       }
       .card {
         border-radius: 15px;
-        background-color: #353744;
+        background-color: #2c2c2c;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       }
       .btn-danger {
-        background-color: #dc3545;
-        border: none;
+        background-color: #191919;
+        border-color: #5a5a5a;
       }
       .btn-danger:hover {
-        background-color: #c82333;
+        background-color: #2c2c2c;
+        border-color: #7a7a7a;
       }
       h1 {
-        font-family: "Abril Fatface";
+        font-family: "Archivo Black", sans-serif;
         color: #ffffff;
         font-weight: bold;
         letter-spacing: 2px;
       }
-      h5 {
-        color: #dc3545;
-        margin-bottom: 20px;
+      h5.card-title {
+        color: #ffffff;
+        margin-bottom: 10px;
       }
       table {
         width: 100%;
@@ -68,10 +70,17 @@
         padding: 15px;
       }
       .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
         text-align: center;
         margin-top: 30px;
         color: #999999;
+        background-color: #191919; /* Match background */
+        padding: 10px 0; /* Add some padding */
       }
+
       @media (max-width: 768px) {
         h1 {
           font-size: 1.8rem;
@@ -136,7 +145,8 @@
       </div>
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title text-danger">IP Details</h5>
+          <h5 class="card-title">IP Details</h5>
+          <!-- Keep color white -->
           <div class="row">
             <div class="col-md-6 mb-3">
               <table class="table table-bordered">

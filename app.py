@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify
 import requests
 
+
+ # Flask is used as a Python web framework for this project to facilitate the development of web applications and APIs with simplicity and flexibility.
 app = Flask(__name__)
 
 # Route to display the main webpage

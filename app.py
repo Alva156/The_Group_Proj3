@@ -18,6 +18,7 @@ def about():
 @app.route('/fetch_ip_info', methods=['GET'])
 def fetch_ip_info():
     try:
+        # ipapi REST API is used to etrieve a user's current public IPv4 address and IPv6 address, 
         response = requests.get('https://ipapi.co/json/')
         data = response.json()
 

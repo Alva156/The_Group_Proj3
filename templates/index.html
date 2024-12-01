@@ -147,6 +147,7 @@
         class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4"
       >
         <h1 class="text-nowrap">YOUR IP INFORMATION</h1>
+        <!-- User choosing from the two options whther ipv4 or ipv6 -->
         <button
           class="btn btn-danger btn-md mt-3 mt-md-0"
           id="fetch-ipv4-btn"
@@ -207,6 +208,7 @@
                     <th>Country Code</th>
                     <td><span id="country_code">-</span></td>
                   </tr>
+                  <!-- Asn and Isp as one -->
                   <tr>
                     <th>ASN & ISP</th>
                     <td><span id="isp">-</span></td>
@@ -214,7 +216,7 @@
                 </tbody>
               </table>
             </div>
-
+            <!-- Added a map for the location -->
             <h5 class="card-title">Location through Map:</h5>
             <div id="map"></div>
           </div>
@@ -226,6 +228,7 @@
     </div>
 
     <script>
+      // communicating with the backend (Flask)
       function fetchIPInfo(ipType) {
         fetch(`/fetch_ip_info?type=${ipType.toLowerCase()}`)
           .then((response) => response.json())
@@ -246,7 +249,7 @@
             alert("Failed to fetch IP information. Please try again later.");
           });
       }
-
+      // function to set the fields to not availabe if the data recieved consists of "not available"
       function setAllFieldsToNotAvailable() {
         console.log("Setting all fields to 'Not available'.");
         document.getElementById("ipv4").textContent = "Not available";
@@ -260,7 +263,7 @@
         document.getElementById("country_code").textContent = "Not available";
         document.getElementById("map").style.display = "none";
       }
-
+      // sets the value of the fields from the response fetched from the backend
       function updateUI(data, type) {
         if (type === "IPv4") {
           const ipv4 = data.ip || "Not available";
@@ -305,7 +308,7 @@
         document.getElementById("country_code").textContent =
           data.country || "Not available";
       }
-
+      // the map
       let mapInstance;
 
       function updateMap(data) {

@@ -237,7 +237,6 @@
               console.error(data.error);
               alert("Error fetching IP information. Please try again.");
             } else {
-              // Update the UI with the IP details
               updateUI(data, ipType);
               updateMap(data);
             }
@@ -315,15 +314,12 @@
         const ip = data.ip;
 
         if (lat && lng && ip) {
-          // Show the map if valid location and IP exist
           document.getElementById("map").style.display = "block";
 
-          // Destroy the existing map instance if it already exists
           if (mapInstance) {
             mapInstance.remove();
           }
 
-          // Initialize a new map instance
           mapInstance = L.map("map").setView([lat, lng], 10);
 
           L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -336,12 +332,10 @@
             .bindPopup("<b>IP Location</b>")
             .openPopup();
         } else {
-          // Hide the map if no valid location or IP
           document.getElementById("map").style.display = "none";
         }
       }
 
-      // Ensure the map is hidden by default
       document.getElementById("map").style.display = "none";
     </script>
   </body>

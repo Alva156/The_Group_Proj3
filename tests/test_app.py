@@ -77,7 +77,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         response_data = json.loads(response.data)
 
-        # Check if there's an error message in the response
+        
         self.assertIn('error', response_data)
         self.assertEqual(response_data['error'], "Invalid IP address received from the API.")
 

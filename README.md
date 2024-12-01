@@ -8,5 +8,4 @@
 
 - python.exe -m pip install --upgrade pip
 - run "pip install -r requirements.txt"
-
--in extensions, install github actions
+- in extensions, install github actions

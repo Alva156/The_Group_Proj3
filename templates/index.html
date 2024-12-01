@@ -10,47 +10,70 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <!-- Leaflet CSS for the map -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <link
       href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Josefin+Sans:wght@400;700&family=Archivo+Black&display=swap"
       rel="stylesheet"
+    />
+    <!-- Leaflet CSS for the map -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     />
     <style>
       body {
         background-color: #191919;
         font-family: "Josefin Sans", sans-serif;
         color: white;
+        padding-bottom: 70px; /* Ensure footer doesn't overlap content */
       }
+
       .navbar {
         background-color: #2c2c2c;
         padding: 10px 20px;
       }
+
       .container {
         max-width: 900px;
         margin-top: 50px;
       }
+
       .card {
         border-radius: 15px;
         background-color: #2c2c2c;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       }
+
       .btn-danger {
         background-color: #191919;
         border-color: #5a5a5a;
       }
+
       .btn-danger:hover {
         background-color: #2c2c2c;
         border-color: #7a7a7a;
       }
+
       h1 {
         font-family: "Archivo Black", sans-serif;
         color: #ffffff;
         font-weight: bold;
         letter-spacing: 2px;
       }
+
       h5.card-title {
         color: #ffffff;
         margin-bottom: 10px;
       }
+
       table {
         width: 100%;
         font-size: 1em;
@@ -58,19 +81,30 @@
         background-color: #2a2a2a;
         border: 1px solid #444;
       }
+
       th {
         background-color: #2a2a2a;
         color: #ffffff;
         padding: 15px;
       }
+
       td {
         background-color: #2a2a2a;
         color: #ffffff;
         border-top: 1px solid #444;
         padding: 15px;
       }
+
+      /* Styling for map */
+      #map {
+        height: 250px; /* Adjusted height */
+        border-radius: 10px;
+        background-color: #2a2a2a;
+        margin-top: 20px;
+      }
+
       .footer {
-        position: fixed;
+        position: relative;
         bottom: 0;
         left: 0;
         width: 100%;
@@ -80,28 +114,7 @@
         background-color: #191919;
         padding: 10px 0;
       }
-
-      @media (max-width: 768px) {
-        h1 {
-          font-size: 1.8rem;
-        }
-        .btn-lg {
-          font-size: 1rem;
-          width: 50%;
-          margin-top: 20px;
-        }
-      }
     </style>
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -200,6 +213,9 @@
                 </tbody>
               </table>
             </div>
+            <!-- Map container -->
+            <h5 class="card-title">Location through Map:</h5>
+            <div id="map"></div>
           </div>
         </div>
       </div>
@@ -217,6 +233,7 @@
           .then((response) => response.json())
           .then((data) => {
             updateUI(data, "IPv4");
+            updateMap(data);
           })
           .catch((error) => {
             console.error("Error fetching IPv4 information:", error);
@@ -230,6 +247,7 @@
           .then((response) => response.json())
           .then((data) => {
             updateUI(data, "IPv6");
+            updateMap(data);
           })
           .catch((error) => {
             console.error("Error fetching IPv6 information:", error);
@@ -242,20 +260,10 @@
           const ipv4 = data.ip || "Not available";
           document.getElementById("ipv4").textContent = ipv4;
           document.getElementById("ipv6").textContent = "Not available";
-          console.log(
-            ipv4 !== "Not available"
-              ? "IPv4 fetched successfully"
-              : "IPv4 not available"
-          );
         } else if (type === "IPv6") {
           const ipv6 = data.ip || "Not available";
           document.getElementById("ipv6").textContent = ipv6;
           document.getElementById("ipv4").textContent = "Not available";
-          console.log(
-            ipv6 !== "Not available"
-              ? "IPv6 fetched successfully"
-              : "IPv6 not available"
-          );
         }
 
         document.getElementById("country").textContent =
@@ -275,6 +283,43 @@
         document.getElementById("country_code").textContent =
           data.country || "Not available";
       }
+
+      let mapInstance;
+
+      function updateMap(data) {
+        const lat = data.loc ? parseFloat(data.loc.split(",")[0]) : null;
+        const lng = data.loc ? parseFloat(data.loc.split(",")[1]) : null;
+        const ip = data.ip; // Check if there's a valid IP address
+
+        if (lat && lng && ip) {
+          // Show the map if valid location and IP exist
+          document.getElementById("map").style.display = "block";
+
+          // Destroy the existing map instance if it already exists
+          if (mapInstance) {
+            mapInstance.remove();
+          }
+
+          // Initialize a new map instance
+          mapInstance = L.map("map").setView([lat, lng], 10);
+
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution:
+              '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          }).addTo(mapInstance);
+
+          L.marker([lat, lng])
+            .addTo(mapInstance)
+            .bindPopup("<b>IP Location</b>")
+            .openPopup();
+        } else {
+          // Hide the map if no valid location or IP
+          document.getElementById("map").style.display = "none";
+        }
+      }
+
+      // Ensure the map is hidden by default
+      document.getElementById("map").style.display = "none";
     </script>
   </body>
 </html>

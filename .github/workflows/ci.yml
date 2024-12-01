@@ -32,6 +32,12 @@ jobs:
       - name: Set environment variables
         run: |
           echo "FLASK_APP=app.py" >> $GITHUB_ENV
+          echo "IPINFO_API_KEY=${{ secrets.IPINFO_API_KEY }}" >> $GITHUB_ENV
+
+      # Check environment variables (for debugging purposes)
+      - name: Check environment variables
+        run: |
+          echo "IPINFO_API_KEY=$IPINFO_API_KEY"
 
       # Run tests explicitly by running the test file directly
       - name: Run tests

@@ -1,14 +1,22 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import requests
+from dotenv import load_dotenv
+import os
 
-
- # Flask is used as a Python web framework for this project to facilitate the development of web applications and APIs with simplicity and flexibility.
+# Initialize Flask application
 app = Flask(__name__)
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Retrieve the ipinfo.io API key from environment variables
+IPINFO_API_KEY = os.getenv("IPINFO_API_KEY")
 
 # Route to display the main webpage
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', api_key=IPINFO_API_KEY)
+
 # Route to display the about webpage
 @app.route('/about')
 def about():
@@ -17,40 +25,38 @@ def about():
 # API route to fetch IP information
 @app.route('/fetch_ip_info', methods=['GET'])
 def fetch_ip_info():
+    ip_type = request.args.get('type', 'ipv4').lower()
+    url = f"https://ipinfo.io/json?token={IPINFO_API_KEY}"
+
+    if ip_type == "ipv6":
+        url = f"https://ipinfo.io/ipv6/json?token={IPINFO_API_KEY}"
+
     try:
-        # ipapi REST API is used to retrieve a user's current public IPv4 address and IPv6 address, 
-        response = requests.get('https://ipapi.co/json/')
+        # Fetch IP information from ipinfo.io
+        response = requests.get(url)
+
+        if response.status_code != 200:
+            return jsonify({"error": f"Failed to fetch IP info. Status code: {response.status_code}"}), 500
+
         data = response.json()
-
-        # Retrieve IPv4 and IPv6 addresses
-        ipv4 = data.get('ip', "Not available")
-        ipv6 = data.get('ipv6', "Not available")
-        country = data.get('country_name', "Not available")
-        region = data.get('region', "Not available")
-        city = data.get('city', "Not available")
-        isp = data.get('org', "Not available")
-        latitude = data.get('latitude', "Not available")
-        longitude = data.get('longitude', "Not available")
-        asn = data.get('asn', "Not available")
-        country_code = data.get('country_code', "Not available")
-
         ip_info = {
-            "ipv4": ipv4,
-            "ipv6": ipv6,
-            "country": country,
-            "region": region,
-            "city": city,
-            "isp": isp,
-            "latitude": latitude,
-            "longitude": longitude,
-            "asn": asn,
-            "country_code": country_code
+            "ip": data.get('ip', "Not available"),
+            "hostname": data.get('hostname', "Not available"),
+            "city": data.get('city', "Not available"),
+            "region": data.get('region', "Not available"),
+            "country": data.get('country', "Not available"),
+            "loc": data.get('loc', "Not available"),
+            "org": data.get('org', "Not available"),
+            "postal": data.get('postal', "Not available"),
+            "country_code": data.get('country', "Not available")
         }
 
-        return jsonify(ip_info)
+        return jsonify({"ip_info": ip_info})
 
+    except requests.exceptions.RequestException:
+        return jsonify({"error": "Network error occurred while fetching IP information"}), 500
     except Exception as e:
-        return jsonify({"error": "Error fetching IP information"}), 500
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

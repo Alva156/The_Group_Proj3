@@ -14,7 +14,6 @@
       href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Josefin+Sans:wght@400;700&family=Archivo+Black&display=swap"
       rel="stylesheet"
     />
-    <!-- Design of the pages are from our custom css style, Google Fonts and Bootstrap -->
     <style>
       body {
         background-color: #191919;
@@ -93,7 +92,6 @@
         }
       }
     </style>
-    <!-- Bootstrap implementation -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -106,50 +104,32 @@
     ></script>
   </head>
   <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">IP Information App</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">About</a>
-            </li>
-          </ul>
-        </div>
       </div>
     </nav>
-    <!-- Ip information contaianer -->
     <div class="container">
       <div
         class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4"
       >
         <h1 class="text-nowrap">YOUR IP INFORMATION</h1>
         <button
-          class="btn btn-danger btn-lg mt-3 mt-md-0"
-          onclick="fetchIpInfo()"
+          class="btn btn-danger btn-md mt-3 mt-md-0"
+          onclick="fetchIPv4Info()"
         >
-          Fetch IP Info
+          Fetch IPv4 Info
+        </button>
+        <button
+          class="btn btn-danger btn-md mt-3 mt-md-0"
+          onclick="fetchIPv6Info()"
+        >
+          Fetch IPv6 Info
         </button>
       </div>
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">IP Details</h5>
-
           <div class="row">
             <div class="col-md-6 mb-3">
               <table class="table table-bordered">
@@ -181,10 +161,6 @@
               <table class="table table-bordered">
                 <tbody>
                   <tr>
-                    <th>ISP</th>
-                    <td><span id="isp">-</span></td>
-                  </tr>
-                  <tr>
                     <th>Latitude</th>
                     <td><span id="latitude">-</span></td>
                   </tr>
@@ -193,12 +169,12 @@
                     <td><span id="longitude">-</span></td>
                   </tr>
                   <tr>
-                    <th>ASN</th>
-                    <td><span id="asn">-</span></td>
-                  </tr>
-                  <tr>
                     <th>Country Code</th>
                     <td><span id="country_code">-</span></td>
+                  </tr>
+                  <tr>
+                    <th>ASN & ISP</th>
+                    <td><span id="isp">-</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -212,25 +188,71 @@
     </div>
 
     <script>
-      function fetchIpInfo() {
-        fetch("/fetch_ip_info")
+      const API_KEY = "{{ api_key }}";
+
+      function fetchIPv4Info() {
+        const ipv4API = `https://ipinfo.io/json?token=${API_KEY}`;
+        fetch(ipv4API)
           .then((response) => response.json())
           .then((data) => {
-            document.getElementById("ipv4").textContent = data.ipv4;
-            document.getElementById("ipv6").textContent = data.ipv6;
-            document.getElementById("country").textContent = data.country;
-            document.getElementById("region").textContent = data.region;
-            document.getElementById("city").textContent = data.city;
-            document.getElementById("isp").textContent = data.isp;
-            document.getElementById("latitude").textContent = data.latitude;
-            document.getElementById("longitude").textContent = data.longitude;
-            document.getElementById("asn").textContent = data.asn;
-            document.getElementById("country_code").textContent =
-              data.country_code;
+            updateUI(data, "IPv4");
           })
           .catch((error) => {
-            alert("Error fetching IP information.");
+            console.error("Error fetching IPv4 information:", error);
+            alert("Failed to fetch IPv4 information. Please try again later.");
           });
+      }
+
+      function fetchIPv6Info() {
+        const ipv6API = `https://ipinfo.io/ipv6/json?token=${API_KEY}`;
+        fetch(ipv6API)
+          .then((response) => response.json())
+          .then((data) => {
+            updateUI(data, "IPv6");
+          })
+          .catch((error) => {
+            console.error("Error fetching IPv6 information:", error);
+            alert("Failed to fetch IPv6 information. Please try again later.");
+          });
+      }
+
+      function updateUI(data, type) {
+        if (type === "IPv4") {
+          const ipv4 = data.ip || "Not available";
+          document.getElementById("ipv4").textContent = ipv4;
+          document.getElementById("ipv6").textContent = "Not available";
+          console.log(
+            ipv4 !== "Not available"
+              ? "IPv4 fetched successfully"
+              : "IPv4 not available"
+          );
+        } else if (type === "IPv6") {
+          const ipv6 = data.ip || "Not available";
+          document.getElementById("ipv6").textContent = ipv6;
+          document.getElementById("ipv4").textContent = "Not available";
+          console.log(
+            ipv6 !== "Not available"
+              ? "IPv6 fetched successfully"
+              : "IPv6 not available"
+          );
+        }
+
+        document.getElementById("country").textContent =
+          data.country || "Not available";
+        document.getElementById("region").textContent =
+          data.region || "Not available";
+        document.getElementById("city").textContent =
+          data.city || "Not available";
+        document.getElementById("isp").textContent =
+          data.org || "Not available";
+        document.getElementById("latitude").textContent = data.loc
+          ? data.loc.split(",")[0]
+          : "Not available";
+        document.getElementById("longitude").textContent = data.loc
+          ? data.loc.split(",")[1]
+          : "Not available";
+        document.getElementById("country_code").textContent =
+          data.country || "Not available";
       }
     </script>
   </body>

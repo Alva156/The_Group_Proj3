@@ -149,13 +149,15 @@
         <h1 class="text-nowrap">YOUR IP INFORMATION</h1>
         <button
           class="btn btn-danger btn-md mt-3 mt-md-0"
-          onclick="fetchIPv4Info()"
+          id="fetch-ipv4-btn"
+          onclick="fetchIPInfo('IPv4')"
         >
           Fetch IPv4 Info
         </button>
         <button
           class="btn btn-danger btn-md mt-3 mt-md-0"
-          onclick="fetchIPv6Info()"
+          id="fetch-ipv6-btn"
+          onclick="fetchIPInfo('IPv6')"
         >
           Fetch IPv6 Info
         </button>
@@ -226,35 +228,55 @@
     <script>
       const API_KEY = "{{ api_key }}";
 
-      function fetchIPv4Info() {
-        const ipv4API = `https://ipinfo.io/json?token=${API_KEY}`;
-        fetch(ipv4API)
+      function fetchIPInfo(ipType) {
+        const ipInfoAPI = `https://ipinfo.io/json?token=${API_KEY}`;
+        fetch(ipInfoAPI)
           .then((response) => response.json())
           .then((data) => {
-            updateUI(data, "IPv4");
+            if (ipType === "IPv6" && !data.ipv6) {
+              console.log("IPv6 information is not available.");
+              setAllFieldsToNotAvailable();
+              return;
+            }
+
+            if (ipType === "IPv4" && !data.ip) {
+              console.log("IPv4 information is not available.");
+              setAllFieldsToNotAvailable();
+              return;
+            }
+
+            // Log the type of IP that is fetched and available
+            console.log(`${ipType} information fetched successfully.`);
+            // Proceed with updating UI if data is available
+            updateUI(data, ipType);
             updateMap(data);
           })
           .catch((error) => {
-            console.error("Error fetching IPv4 information:", error);
-            alert("Failed to fetch IPv4 information. Please try again later.");
+            console.error("Error fetching IP information:", error);
+            alert("Failed to fetch IP information. Please try again later.");
           });
       }
 
-      function fetchIPv6Info() {
-        const ipv6API = `https://ipinfo.io/ipv6/json?token=${API_KEY}`;
-        fetch(ipv6API)
-          .then((response) => response.json())
-          .then((data) => {
-            updateUI(data, "IPv6");
-            updateMap(data);
-          })
-          .catch((error) => {
-            console.error("Error fetching IPv6 information:", error);
-            alert("Failed to fetch IPv6 information. Please try again later.");
-          });
+      function setAllFieldsToNotAvailable() {
+        console.log("Setting all fields to 'Not available'.");
+        document.getElementById("ipv4").textContent = "Not available";
+        document.getElementById("ipv6").textContent = "Not available";
+        document.getElementById("country").textContent = "Not available";
+        document.getElementById("region").textContent = "Not available";
+        document.getElementById("city").textContent = "Not available";
+        document.getElementById("isp").textContent = "Not available";
+        document.getElementById("latitude").textContent = "Not available";
+        document.getElementById("longitude").textContent = "Not available";
+        document.getElementById("country_code").textContent = "Not available";
+
+        // Hide the map as no valid location exists
+        document.getElementById("map").style.display = "none";
       }
 
       function updateUI(data, type) {
+        // Log the data being updated in the UI
+        console.log(`Updating UI with ${type} data:`, data);
+
         if (type === "IPv4") {
           const ipv4 = data.ip || "Not available";
           document.getElementById("ipv4").textContent = ipv4;
@@ -288,7 +310,7 @@
       function updateMap(data) {
         const lat = data.loc ? parseFloat(data.loc.split(",")[0]) : null;
         const lng = data.loc ? parseFloat(data.loc.split(",")[1]) : null;
-        const ip = data.ip; // Check if there's a valid IP address
+        const ip = data.ip;
 
         if (lat && lng && ip) {
           // Show the map if valid location and IP exist

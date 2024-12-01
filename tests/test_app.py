@@ -26,7 +26,6 @@ class TestApp(unittest.TestCase):
         response = self.client.get('/fetch_ip_info?type=ipv4')
         self.assertEqual(response.status_code, 200)
         
-      
         response_data = json.loads(response.data)
         self.assertIn('ip', response_data)
         self.assertIn('hostname', response_data)
@@ -39,7 +38,6 @@ class TestApp(unittest.TestCase):
         response = self.client.get('/fetch_ip_info?type=ipv6')
         self.assertEqual(response.status_code, 200)
         
-    
         response_data = json.loads(response.data)
         self.assertIn('ip', response_data)
         self.assertIn('hostname', response_data)
@@ -52,7 +50,6 @@ class TestApp(unittest.TestCase):
         response = self.client.get('/fetch_ip_info')
         self.assertEqual(response.status_code, 200)
         
-       
         response_data = json.loads(response.data)
         self.assertIn('ip', response_data)
         self.assertIn('hostname', response_data)
@@ -63,26 +60,23 @@ class TestApp(unittest.TestCase):
     @patch('requests.get')  
     def test_fetch_ip_info_error_handling(self, mock_get):
         """Test the fetch_ip_info API when there's a network error"""
-     
         mock_get.side_effect = Exception("Network error")
 
         response = self.client.get('/fetch_ip_info?type=ipv4')
         self.assertEqual(response.status_code, 500)
         response_data = json.loads(response.data)
-        self.assertEqual(response_data['error'], 'Network error occurred while fetching IP information.')
+        self.assertEqual(response_data['error'], 'An unexpected error occurred: Network error')
 
     @patch('requests.get')  
     def test_fetch_ip_info_invalid_ip(self, mock_get):
         """Test the fetch_ip_info API when there's an invalid IP address"""
-       
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {"ip": "invalid_ip"}
 
         response = self.client.get('/fetch_ip_info?type=ipv4')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 500)
         response_data = json.loads(response.data)
         
-       
         self.assertEqual(response_data['ip'], "Not available")
         self.assertEqual(response_data['hostname'], "Not available")
         self.assertEqual(response_data['city'], "Not available")

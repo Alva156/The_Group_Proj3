@@ -79,7 +79,8 @@ class TestApp(unittest.TestCase):
 
         # Check if there's an error message in the response
         self.assertIn('error', response_data)
-        self.assertEqual(response_data['error'], "IP information could not be retrieved")
+        self.assertEqual(response_data['error'], "Invalid IP address received from the API.")
+
 
 
 if __name__ == "__main__":

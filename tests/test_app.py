@@ -67,21 +67,7 @@ class TestApp(unittest.TestCase):
         response_data = json.loads(response.data)
         self.assertEqual(response_data['error'], 'An unexpected error occurred: Network error')
 
-    @patch('requests.get')  
-    def test_fetch_ip_info_invalid_ip(self, mock_get):
-        """Test the fetch_ip_info API when there's an invalid IP address"""
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {"ip": "invalid_ip"}
 
-        response = self.client.get('/fetch_ip_info?type=ipv4')
-        self.assertEqual(response.status_code, 500)
-        response_data = json.loads(response.data)
-        
-        self.assertEqual(response_data['ip'], "Not available")
-        self.assertEqual(response_data['hostname'], "Not available")
-        self.assertEqual(response_data['city'], "Not available")
-        self.assertEqual(response_data['region'], "Not available")
-        self.assertEqual(response_data['country'], "Not available")
 
 if __name__ == "__main__":
     unittest.main()

@@ -26,44 +26,53 @@ def about():
 # API route to fetch IP information
 @app.route('/fetch_ip_info', methods=['GET'])
 def fetch_ip_info():
-    # Get the type of IP (default is ipv4)
-    ip_type = request.args.get('type', 'ipv4').lower()
-    
-    # Use the general URL that works for both IPv4 and IPv6
+    ip_type = request.args.get('type', '').lower()  # Get the IP type from the request (IPv4 or IPv6)
     url = f"https://ipinfo.io/json?token={IPINFO_API_KEY}"
 
     try:
-        # Fetch IP information from ipinfo.io
+        # Fetch the IP info from ipinfo.io
         response = requests.get(url)
-
         if response.status_code != 200:
-            return jsonify({"error": f"Failed to fetch IP info. Status code: {response.status_code}"}), 500
+            return jsonify({"error": "Failed to fetch IP information."}), 500
 
         data = response.json()
-        ip = data.get('ip', "Not available")
-        
-        # Determine the IP type (ipv4 or ipv6)
-        ip_type = 'ipv6' if ipaddress.ip_address(ip).version == 6 else 'ipv4'
+        ip = data.get("ip", "Not available")
 
-        ip_info = {
+        # Validate the IP type
+        try:
+            ip_obj = ipaddress.ip_address(ip)
+            if (ip_type == "ipv4" and ip_obj.version != 4) or (ip_type == "ipv6" and ip_obj.version != 6):
+                return jsonify({
+                
+                    "ip": "Not available",
+                     "hostname": "Not available",
+                    "city": "Not available",
+                    "region": "Not available",
+                    "country": "Not available",
+                    "loc": "Not available", 
+                    "org": "Not available",
+                    "postal": "Not available",
+                   
+                }), 200
+        except ValueError:
+            return jsonify({"error": "Invalid IP address received from the API."}), 500
+
+        # Return details if the IP matches the selected type
+        return jsonify({
             "ip": ip,
-            "hostname": data.get('hostname', "Not available"),
-            "city": data.get('city', "Not available"),
-            "region": data.get('region', "Not available"),
-            "country": data.get('country', "Not available"),
-            "loc": data.get('loc', "Not available"),
-            "org": data.get('org', "Not available"),
-            "postal": data.get('postal', "Not available"),
-            "country_code": data.get('country', "Not available"),
-            "ip_type": ip_type  # Add the detected IP type to the response
-        }
-
-        return jsonify({"ip_info": ip_info})
-
-    except requests.exceptions.RequestException:
-        return jsonify({"error": "Network error occurred while fetching IP information"}), 500
+            "hostname": data.get("hostname", "Not available"),
+            "city": data.get("city", "Not available"),
+            "region": data.get("region", "Not available"),
+            "country": data.get("country", "Not available"),
+            "loc": data.get("loc", "Not available"),
+            "org": data.get("org", "Not available"),
+            "postal": data.get("postal", "Not available")
+        })
+    except requests.RequestException:
+        return jsonify({"error": "Network error occurred while fetching IP information."}), 500
     except Exception as e:
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

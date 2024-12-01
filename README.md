@@ -4,8 +4,9 @@
 - install this in the terminal "pip install Flask requests"
 - run the program in the terminal "python app.py"
 
-- pip install requests
+-DEC 1, 2024 below new instruc
+
 - python.exe -m pip install --upgrade pip
-- pip install python-dotenv
+- run "pip install -r requirements.txt"
 
 -in extensions, install github actions

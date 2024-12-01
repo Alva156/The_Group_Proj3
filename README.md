@@ -7,3 +7,5 @@
 - pip install requests
 - python.exe -m pip install --upgrade pip
 - pip install python-dotenv
+
+-in extensions, install github actions

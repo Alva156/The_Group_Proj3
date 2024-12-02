@@ -8,7 +8,7 @@ class TestApp(unittest.TestCase):
     def setUpClass(cls):
         cls.client = app.test_client()
         cls.client.testing = True
-# Test Cases
+# 7 Test Cases 
     def test_index(self):
         """Test the index route"""
         response = self.client.get('/')
